@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/mvc
+			http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	<!-- Enable annotation driven controllers, validation etc... -->
+	<!-- Spring Web Mapping -->	
+	
+	<context:component-scan base-package="com.controller" />
+	<context:annotation-config />
+	<mvc:annotation-driven />
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+	<!-- Spring Web Mapping End-->
+	
+	<!-- Spring Security Bean-->
+<!-- 	<interceptors> -->
+<!-- 	   <beans:bean id="webContentInterceptor" class="org.springfamework.web.servlet.mvc.WebContentInterceptor"> -->
+<!-- 	      <beans:property name="cacheSeconds" value="0"></beans:property> -->
+<!-- 	      <beans:property name="useExpiresHeader" value="true" ></beans:property> -->
+<!-- 	      <beans:property name="useCacheControlHeader" value="true" ></beans:property> -->
+<!-- 	      <beans:property name="useCacheControlNoStore" value="true" ></beans:property> -->
+<!-- 	   </beans:bean> -->
+<!-- 	</interceptors> -->
+
+	<!-- Spring Hibernate Mapping -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/crm" />
+		<property name="username" value="root" />
+		<property name="password" value="boss" />
+	</bean>
+
+ 	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.dwr.Client</value>
+				<value>com.login.Login</value>
+				<value>com.gem.Gem</value>
+				<value>com.gem.dropdown</value>
+			</list>
+		</property>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.id.new_generator_mappings">false</prop>
+			</props>
+		</property>		
+	</bean>
+	<!-- Spring Message Resources Mapping End-->
+	
+	<bean id="clientDao" class="com.dwr.ClientDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="service" class="com.dwr.ClientServiceImpl">
+		<property name="clientDao" ref="clientDao" />
+	</bean>
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/messages" />
+	</bean>
+	
+</beans>
